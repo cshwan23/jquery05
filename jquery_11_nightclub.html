@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .animation{
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+        }
+    </style>
+    <meta charset='utf-8'>
+    <script src="jquery-1.11.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+
+            // 3초마다 함수 upTr('xxx')를 반복적으로 호출
+            setInterval(function(){
+
+                upTr('xxx');
+
+                leftTr('yyy');
+
+            }, 1000*0.5 );
+
+        });
+        //------------------------------------------
+        // 첫번째 tr 을 복사해서 마지막 tr 태그 다음에 삽입하고
+        // 첫번째 tr 을 삭제하는 함수 선언
+        //------------------------------------------
+        function upTr(idV){
+            //--------------------------
+            // id='idV 매개변수저장값'을 가진 테이블 태그를 관리하는
+            // JQuery 객체의 메.위.주 를 변수에 저장
+            //--------------------------
+            var tableObj = $("#"+idV);
+
+            // 첫번째 tr 을 관리하는 JQuery 객체의 메.위.주를 변수에 저장
+            var firstTrObj = tableObj.find("tr").eq(0);
+                // 위 코딩은 아래 코딩으로 대체가 가능하다.
+                // var firstTrObj = tableObj.find("tr:eq(0)");
+                // var firstTrObj = tableObj.find("tr").first();
+
+            // 마지막 tr을 관리하는 JQuery 객체의 메.위.주를 변수에 저장
+            var lastTrObj = tableObj.find("tr").last();
+
+            // append 막내아들 입양
+            // prepend 첫째 아들 입양
+            // after 바로 밑 동생을 입양
+            // clone 복사메소드
+
+            //--------------------------
+            // 첫번째 tr을 복사해서 마지막 tr 다음에 삽입하자
+            //--------------------------
+            lastTrObj.after(firstTrObj.clone()); 
+
+            // remove( ) : 제이쿼리 객체가 관리하는 태그 s자체를 삭제하는 메소드
+            // empty( ) : 제이쿼리 객체가 관리하는 태그 내부 전체를 삭제하는 메소드
+
+            //--------------------------
+            // 첫번째 tr을 삭제하자
+            //--------------------------
+            firstTrObj.remove();
+        }
+
+        
+        function leftTr(idV){
+        // 첫번째 td 를 복사해서 마지막 td 태그 다음에 삽입하고
+        // 첫번째 td 를 삭제하는 함수 선언.
+
+            var tableObj = $("#"+idV);
+            // id='idV매개변수저장값'을 가진 테이블 태그를 관리하는
+            // JQuery 객체의 메위주를 변수에 저장
+
+            var firstTdObj = tableObj.find("tr td").eq(0);
+            
+            var lastTdObj = tableObj.find("tr td").last();
+
+            lastTdObj.after(firstTdObj.clone()); 
+            firstTdObj.remove();
+        }
+
+    </script>
+    
+</head>
+<body><center>
+    <table class="animation" border="0" align=center id=xxx 
+           cellpadding="8" cellspacing=0 style="border-collapse: collapse;" >
+
+        <tr bgcolor="yellow">
+            <td>짱구
+        <tr bgcolor="orange">
+            <td>보노보노
+        <tr bgcolor="red">
+            <td>피카츄
+        <tr bgcolor="hotpink">
+            <td>도라에몽
+    </table><br>
+    <table class="animation" border="0" align=center id=yyy 
+           cellpadding="8" cellspacing=0 style="border-collapse: collapse;" >
+
+        <tr>
+            <td bgcolor="yellow">짱구
+       
+            <td bgcolor="orange">보노보노
+        
+            <td bgcolor="red">피카츄
+        
+            <td bgcolor="hotpink">도라에몽
+    </table>
+    
+</body>
+</html>

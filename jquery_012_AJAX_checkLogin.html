@@ -1,0 +1,131 @@
+<!-- 
+~~~~~~~~~~~~~~~~~~~~~
+jquery_012_AJAX_checkLogin.html
+~~~~~~~~~~~~~~~~~~~~~
+    => 입력한 아이디, 암호를 가지고 비동기 방식으로 서버와 통신하여 
+       아이디, 암호의 존재 여부를 확인해본다.
+ -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .xxx{
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    }
+</style>
+<meta charset='utf-8'>
+
+<script src="jquery-1.11.0.min.js"></script>
+<script src="common_js.js"></script>
+<script>
+
+    
+    // 로그인 버튼을 클릭하면 호출 되는 함수 선언
+    /* 함수 안에서 아이디, 암호 유효성을 체크하고 
+        비동기 방식으로 웹서버에 데이터를 전송하고
+        웹서버로부터 아이디, 암호의 존재 여부의 응답을 받을 것이다.*/
+    function checkLogin(){
+
+        // 입력한 아이디를 얻어 변수 에 저장
+        var uid = $(".uid").val();
+        // var uid = document.loginForm.uid.value;
+
+        // 만약 아이디 형식에 맞지 않으면
+        // 경고, 비우기, 커서넣기, 함수중단
+        if(uid.split(" ").join("")==""){
+            alert("아이디 입력 요망")
+            $(".uid").val("");
+            $(".uid").focus();
+            return;
+        }
+
+        var pwd = $(".pwd").val();
+
+        // 만약 암호 형식에 맞지 않으면
+        // 경고, 비우기, 커서넣기, 함수중단
+        if(pwd.split(" ").join("")==""){
+            alert("비밀번호 입력 요망")
+            $(".pwd").val("");
+            $(".pwd").focus();
+            return;
+        }
+        //------------------------------------------
+        // 아이디, 암호의 존재 여부를 비동기 방식으로 웹서버의 자원을 호출한 후
+        // 아이디, 암호의 존재 여부를 html로 응답받는다.
+        // 응답 받은 html 안에 아이디, 암호의 존재 여부가 들어있다.
+        //------------------------------------------
+        // $.ajax({ "속성변수명": 데이터, "키명":데이터, ~ } )
+
+        $.ajax({
+            // 서버쪽 url 주소 설정
+            // 원래는 서버쪽 자원을 호출해야하나 웹서버 구축이 안됐으므로 html 호출로 대체한다.
+            // ("checkLogin.html"라고 가정하자 html문서 안엔 아이디 암호의 존재여부(개수)가 들어있겠지)
+              url : "checkLogin.html"
+
+            // form 태그 안의 입력양식의 name 값과 value 값을 서버로 보내는 방법 설정  
+            , type : "get"
+
+            // 웹서버로 보낼 form 태그 안의 입력양식의 name 값과 value 값을 설정
+            // , data : {'입력양식name값' : 입력양식value값, '입력양식name값' : 입력양식value값, ~ }
+            , data : {'uid' : uid, 'pwd' : pwd }
+                // 위 코딩 대신에 아래 코딩으로 대체 가능하다
+                // , data : "uid="+uid+"&pwd="+pwd
+                // 위 코딩 대신에 form 태그 내부의 모든 name 값과 value 값을 보내는 방법
+                // (미쳤냐 프로젝트 현장가서 손으로 다 쓰게? 현장가면 form태그가 여러개 일 수 있다)
+                // , data : $("form").filter("[name=loginForm]").serialize()
+
+            // 웹서버가 응답을 성공적으로 보냈을 경우 실행할 익명함수 설정
+            // 익명함수의 매개변수에는 서버의 응답물이 저장된 HTML 소스가 들어옴.
+            // , success : function( 서버가 보낸 HTML 문서안의 문자열 ){ 서버와 통신이 성공했을 경우 실행할 실행구문 }
+            , success : function( responseHTML ){ 
+                 
+                // 매개변수로 들어온 서버의 응답물을 HTML 문자열을 관리하는 JQuery 객체의 메위주 얻기
+                var obj = $(responseHTML);
+                
+                // JQuery 객체가 관리하는 웹서버의 응답물 HTML 문자열에서 class=idCnt를 가진
+                // 태그가 안고 문자열을 얻기. 이 문자열이 바로 아이디.암호의 존재 개수이다.
+                var idCnt = obj.filter(".idCnt").text();
+
+                // 문자열의 앞뒤 공백 제거하기
+                idCnt = $.trim(idCnt);
+
+                // 만약 문자열이 1이면 로그인 성공 메시지 띄우고 main.html 로 이동하기
+                if(idCnt==1){
+                    alert("로그인 성공!");
+                    location.replace("main.html");
+
+                // 만약 문자열이 1이 아니면 경고하고 아이디.암호 비우기    
+                }else{
+                    alert("로그인 실패! 아이디 암호 재입력 바람!")
+                    $(".uid").val();
+                    $(".pwd").val();
+                }
+            }
+            // 웹서버와 통신이 실패했을 경우 실행할 익명함수 설정
+            , error : function(){ alert("웹서버와 통신 과정에서 에러발생! 관리자에게 문의 바람") }
+        });
+
+
+
+
+    }
+
+</script>
+</head>
+<body class="xxx"><center>
+    <form name="loginForm" action=''>
+        [회원가입]<br><br>
+        <table border="1" cellpadding="8" cellspacing=0>
+            <tr>
+                <td>아이디
+                <td><input type="text" class="uid" name="uid">
+            <tr>
+                <td>암호
+                <td><input type="password" class="pwd" name="pwd">        
+        </table><br>
+        <input type="button" value="로그인" onclick="checkLogin();">
+    </form>
+    
+</body>
+</html>

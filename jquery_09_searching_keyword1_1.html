@@ -1,0 +1,234 @@
+<!-- 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+jquery_09_searching_keyword1_1.html
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    (jquery_09_searching_keyword1.html을)
+    => 1. for 반복문을 each 함수로 대체하기
+    => 2. 배경색(홀수행 짝수행) 공용함수로 빼기
+ -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<style>
+    .xxx {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    .style1{
+        background-color: #f9d4e8;
+        color: #fff;
+    }
+</style>
+<script src="jquery-1.11.0.min.js"></script>
+<script>
+
+    //--------------------------------------------------------
+    // 화면에 보이는 tr 태그의 짝수행, 홀수행의 배경색을 지정하는 함수 선언하기
+    //--------------------------------------------------------
+    function inputBgcolor_to_tr( trs_Obj, oddBgcolor, evenColor){
+        // trs_Obj    : 화면에 보이거나 안 보이게 할 모든 tr 태그를 관리하는 JQuery 객체 메위주
+        // oddBgcolor : 홀수번째 tr 태그의 배경색
+        // evenColor  : 짝수번째 tr 태그 배경색
+    
+        //화면에 보이는것 만 골라내는 선택자가 있다.(:visible)
+        // tr 태그 중 화면에 보이는 tr 중 홀수 tr 만 골라서 배경색 주기
+        trs_Obj.filter(":visible").filter(":even").css("background-color",oddBgcolor);
+        // tr 태그 중 화면에 보이는 tr 중 짝수 tr 만 골라서 배경색 주기
+        trs_Obj.filter(":visible").filter(":odd").css("background-color",evenColor);
+
+    }
+
+
+
+$(document).ready(function(){
+
+    // class = sungjuk 을 가진 태그를 관리하는
+    // JQuery 객체의 메위주를 변수 sungjukObj에 저장
+    var sungjukObj = $(".sungjuk");
+
+    // thead 태그 안의 tr의 배경색을 바꾸기
+    sungjukObj.find("thead tr").css({"background-color" : "#99c5ff"})
+
+    // // tbody 태그 안의 짝수행 tr의 배경색을 핑크로 바꾸기 
+    // sungjukObj.find("tbody tr:odd").css({ "background-color": "#f9d4e8"})
+
+    inputBgcolor_to_tr(
+        sungjukObj.find("tbody tr")
+        , "white"
+        ,"#f9d4e8"
+        )
+
+    // class=search 를 가진 태그에 click 이벤트가 발생하면
+    // 키워드를 가지고 검색한 후 검색된 행만 보여주는 코딩 설정하기
+    $(".search").click(function(){
+
+
+        // 입력된 키워드 값을 얻어내어 변수에 저장해야한다.
+        var keyword1 = $(".keyword1").val();
+
+        // 공백만 입력하고 검색을 누를 경우 검색안해준다..
+        // 1.공백이 있으면 2.경고하고 3.키워드 비우고 4.중지
+        if(keyword1.split(" ").join("")==""){
+
+            alert("공백 있으면 안됩니다.");
+            $(".keyword1").val("");
+            return;
+        }
+
+        //키워드 변수 안에 저장된 데이터의 앞뒤 공백 제거
+        keyword1 = $.trim(keyword1);
+
+        //---------------------------------------
+        // 1. 입력한 문자를 대문자로 통일하고
+        // 2. 검색 당한 놈의 문자도 대문자로 통일하고
+        // 3. 다시 검색당한 놈의 문자를 원래대로 돌려놓는다.
+        //---------------------------------------
+        //---------------------------------------
+        // 1. 입력한 문자를 대문자로 통일
+        //---------------------------------------
+        keyword1 = keyword1.toUpperCase();
+
+        //---------------------------------------
+        // 2. 검색 당할 놈의 문자도 대문자로 통일
+        //---------------------------------------
+        // 일단 모든행을 다 감춘다.
+        // class=sungjuk 가진 태그 후손의 tbody 태그후손의 tr 태그(17개tr)을 관리하는
+        // JQuery 객체의 메위주를 변수 trsObj에 저장하기
+        var trs_Obj = sungjukObj.find("tbody tr");
+
+        //table 태그 후손중 tbody 후손중 모든 tr을 감추기
+        trs_Obj.hide();
+
+        // trs_Obj.css({"background-color":""})
+
+        // 각 tr 태그 안의 td 태그 안에 키워드가 있으면 그 tr 태그를 보이기
+        var cnt = 0;
+        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            // for(var i=0; i<trs_Obj.length; i++){
+                
+            //     // 검색되는 i번째 tr태그를 관리하는 jquery 객체의 메위주를 변수 tr1Obj에 저장하기
+            //     var tr_Obj = trs_Obj.eq(i);
+            
+            //     // 자식을 관리하는 메소드 = childeren(), find()
+            //     //i 번째 태그 내부의 1번째 td 태그가 안고 있는 문자열 얻고 대문자로 바꾸기
+            //     var td1_Text = tr_Obj.find("td").eq(0).text().toUpperCase();
+            //     //i 번째 태그 내부의 2번째 td 태그가 안고 있는 문자열 얻고 대문자로 바꾸기
+            //     var td2_Text = tr_Obj.find("td").eq(1).text().toUpperCase();
+            //     //i 번째 태그 내부의 3번째 td 태그가 안고 있는 문자열 얻고 대문자로 바꾸기
+            //     var td3_Text = tr_Obj.find("td").eq(2).text().toUpperCase();
+
+            //     // 1번째 또는 2번째 또는 3번째 td 태그가 안고있는 문자열에 keyword 변수 안의 데이터가 있으면
+            //     if((td1_Text.indexOf(keyword1)>=0)||
+            //         (td2_Text.indexOf(keyword1)>=0)||
+            //         (td3_Text.indexOf(keyword1)>=0)){
+
+            //             tr_Obj.show();
+            //             if(cnt%2==1){
+            //                 tr_Obj.css({"background-color":"#f9d4e8"})
+            //             }
+            //             cnt++;
+            //     }            
+            // }
+        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        
+
+        // class=sungjuk 가진 태그 후손의 tbody 태그 후손의 tr에 차례대로 접근해서
+        // tr 내부에 데이터를 검색하는 익명함수를 실행한다.
+        // tbody 태그의 모든 tr을 관리하는 객체 trs_Obj안을 반복으로 돌릴거다.(i 생략해도 상관x)
+        trs_Obj.each(function(i){
+            
+            // i번째 tr 태그를 관리하는 JQuery 객체의 메위주를 얻어서 변수 tr_Obj에 넣기
+            var tr_Obj = $(this);  // each가 잡은 태그가 "this" 이다.
+
+            //i 번째 태그 내부의 1번째 td 태그가 안고 있는 문자열 얻고 대문자로 바꾸기
+            var td1_Text = tr_Obj.find("td").eq(0).text().toUpperCase();
+
+            //i 번째 태그 내부의 2번째 td 태그가 안고 있는 문자열 얻고 대문자로 바꾸기
+            var td2_Text = tr_Obj.find("td").eq(1).text().toUpperCase();
+
+            //i 번째 태그 내부의 3번째 td 태그가 안고 있는 문자열 얻고 대문자로 바꾸기
+            var td3_Text = tr_Obj.find("td").eq(2).text().toUpperCase();
+
+            //1번째 또는 2번째 또는 3번째 td 태그가 안고있는 문자열에 keyword 변수 안의 데이터가 있으면
+            if((td1_Text.indexOf(keyword1)>=0)||
+               (td2_Text.indexOf(keyword1)>=0)||
+               (td3_Text.indexOf(keyword1)>=0)){
+
+                // i번째 tr 태그 보이기
+                tr_Obj.show();
+                // if(cnt%2==1){
+                //     tr_Obj.css({"background-color":"#f9d4e8"})
+                // }
+                cnt++;
+            }  
+
+        })
+        inputBgcolor_to_tr(
+        sungjukObj.find("tbody tr")
+        , "white"
+        ,"#f9d4e8"
+        )
+
+    $(".count").text(cnt+"개")
+
+    });
+    $(".allSearch").click(function(){
+                
+
+        // sungjukObj.find("tbody tr").css({"background-color":""});
+                
+        sungjukObj.find("tbody tr").show();
+                
+        // sungjukObj.find("tbody tr:odd").css({"background-color":"pink"});
+        inputBgcolor_to_tr(
+        sungjukObj.find("tbody tr")
+        , "white"
+        ,"#f9d4e8"
+        )
+                $(".keyword1").val("");
+
+                $(".count").text(sungjukObj.find("tbody tr").length+"개");
+
+                
+    })
+    $(".count").text(sungjukObj.find("tbody tr").length+"개");
+});
+</script>
+</head>
+<body class="xxx"><center>
+
+    키워드 : <input type="text" name="keyword1" class="keyword1">
+           <input type="button" value="검색" class="search">
+           <input type="button" value="모두 검색" class="allSearch"><br><br>
+           <div class="count"></div>
+
+    <table border="2" cellpadding="7"  class="sungjuk" style="border-collapse: collapse;" cellspacing=0>
+        <thead>
+            <tr><th>번호<th>이름<th>평균
+        </thead>
+        <tbody align="center">
+            <tr><td>101<td>John<td>87
+            <tr><td>102<td>KimYeongjin<td>90
+            <tr><td>103<td>JeongYeongwoo<td>85
+            <tr><td>104<td>ParkMooun<td>92
+            <tr><td>105<td>Handonghee<td>65
+            <tr><td>106<td>KwonPanjun<td>83
+            <tr><td>107<td>WooChoonsik<td>95
+            <tr><td>108<td>HongGyujin<td>42
+            <tr><td>109<td>JiSanghwa<td>54
+            <tr><td>110<td>JeongGyeongsu<td>17
+            <tr><td>111<td>ChoiSeungyong<td>59
+            <tr><td>112<td>JeongJiwoong<td>48
+            <tr><td>113<td>JeonJaeho<td>39
+            <tr><td>114<td>KimYeongtak<td>82
+            <tr><td>115<td>ChoiSeungmin<td>39
+            <tr><td>116<td>WooMingu<td>42
+            <tr><td>117<td>KimJonghyeok<td>82
+            <tr><td>118<td>아이린<td>99
+        </tbody>
+    </table>
+    
+</body>
+</html>
